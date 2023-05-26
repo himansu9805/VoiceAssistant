@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+    <script
+      src="https://kit.fontawesome.com/cf9970113a.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.js"
+      integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body class="h-screen flex flex-col justify-between items-center">
+    <header>{% include 'navbar.html' %}</header>
+    <main>{% block content %}{% endblock %}</main>
+    <footer>{% include 'footer.html' %}</footer>
+  </body>
+</html>

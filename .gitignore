@@ -1,0 +1,40 @@
+# Python
+*.pyc
+__pycache__/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Flask
+instance/
+webassets-manifest.cache
+
+# IDEs and editors
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Compiled files
+*.pyc
+
+# Dependency directories
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+dist/
+build/
+.mypy_cache/
+.pytest_cache/
