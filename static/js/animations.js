@@ -28,10 +28,19 @@ window.onload = (event) => {
 
   anime.timeline({ loop: false }).add({
     targets: "#avani-description",
-    translateY: [-10, 0],
+    translateY: [-20, 0],
     opacity: [0, 1],
     easing: "easeInOutQuad",
     duration: 500,
     delay: 2000,
   });
 };
+
+$("#record").click(function () {
+  anime.timeline({ loop: true }).add({
+    targets: "#grow-animation",
+    scale: [1, 1.1, 1],
+    easing: "easeInOutQuad",
+    duration: 800,
+  });
+});

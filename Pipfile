@@ -12,6 +12,11 @@ gtts = "*"
 flask = "*"
 pytailwindcss = "*"
 openai = "*"
+bardapi = "*"
+marko = "*"
+azure-cognitiveservices-speech = "*"
+youtube-search-python = "*"
+flask-cors = "*"
 
 [dev-packages]
 

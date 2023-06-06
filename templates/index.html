@@ -1,20 +1,20 @@
 {% extends "base.html" %} {% block title %}{{ title }}{% endblock %} {% block
 content %}
-<section class="w-screen max-w-3xl">
-  <div class="pt-8 pb-6">
+<section class="md:w-screen md:max-w-3xl text-center md:text-start">
+  <div class="py-8 overflow-hidden">
     <h1
       id="avani-heading-text"
-      class="my-8 text-5xl leading-4 font-bold hidden"
+      class="my-8 text-4xl md:text-5xl leading-4 font-bold hidden"
     >
       <i class="fa-solid fa-microchip"></i> A.V.A.N.I.
     </h1>
     <h2
       id="typing1"
-      class="updates-link my-8 text-2xl py-2 leading-4 font-medium inline"
+      class="w-full updates-link my-8 text-xl md:text-2xl py-2 leading-4 font-medium inline"
     ></h2>
   </div>
 </section>
-<section id="avani-description" class="hidden">
+<section id="avani-description" class="hidden text-center md:text-justify">
   <div>
     <p class="my-2 home-text">
       Hi Folks, I'm Avani, an AI-powered Voice Assistant. I am one stop site for
@@ -45,22 +45,28 @@ content %}
     <hr class="border-skin-line" aria-hidden="true" />
   </div>
   <div class="flex flex-col justify-center items-start pt-4 pb-6">
-    <h2 class="my-8 text-2xl leading-4 font-bold">Technical Updates</h2>
+    <h2
+      class="w-full my-8 text-2xl leading-4 font-bold text-center md:text-start"
+    >
+      <i class="fa-brands fa-github"></i> Technical Updates
+    </h2>
     {% if commits.length != 0 %} {% for commit in commits %}
     <div class="w-full flex flex-col justify-start items-start my-4">
       <h3
-        class="updates-link font-medium text-lg decoration-dashed hover:underline"
+        class="updates-link font-medium text-lg decoration-dashed hover:underline text-center md:text-start"
       >
         <i class="fa-solid fa-code-commit"></i>
         <a href="{{commit.html_url}}">{{commit.commit.message}}</a>
       </h3>
-      <p class="italic text-sm text-gray-500">
+      <p class="w-full italic text-sm text-gray-500 text-center md:text-start">
         <i class="fa-solid fa-calendar-days"></i>
         {{datetime.fromisoformat(commit.commit.author.date).strftime('%B %d,
         %Y')}} |
         {{datetime.fromisoformat(commit.commit.author.date).strftime('%r')}}
       </p>
-      <div class="w-full flex flex-row justify-start items-center mt-1">
+      <div
+        class="w-full flex flex-row justify-center items-center md:justify-start mt-1"
+      >
         <span class="w-auto">Committed by </span>
         &nbsp;
         <div class="w-auto flex flex-row justify-start items-center">
@@ -80,7 +86,11 @@ content %}
       </div>
     </div>
     {% endfor %} {% endif %}
-    <p class="italic text-sm text-gray-500 mt-4">-- End of list --</p>
+    <p
+      class="w-full italic text-sm text-gray-500 mt-4 text-center md:text-start"
+    >
+      -- End of list --
+    </p>
   </div>
 </section>
 <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>

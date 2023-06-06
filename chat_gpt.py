@@ -15,4 +15,4 @@ def generate_response(prompt):
         frequency_penalty=0,
         presence_penalty=0
     )
-    return response.choices[0].text # type: ignore
+    return response.choices[0].text  # type: ignore

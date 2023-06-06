@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='img/AVANI.png') }}"
+    />
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
     <script
@@ -15,10 +20,14 @@
       integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
       crossorigin="anonymous"
     ></script>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
   </head>
   <body class="h-screen flex flex-col justify-between items-center">
-    <header>{% include 'navbar.html' %}</header>
-    <main>{% block content %}{% endblock %}</main>
+    <header class="w-full md:max-w-3xl">{% include 'navbar.html' %}</header>
+    <main class="w-full">{% block content %}{% endblock %}</main>
     <footer>{% include 'footer.html' %}</footer>
   </body>
 </html>

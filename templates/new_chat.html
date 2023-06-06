@@ -2,53 +2,56 @@
 content %}
 <section class="w-screen max-w-3xl h-full">
   <div class="pt-8 pb-6 w-full h-full flex flex-col justify-between">
-    <h1 id="chat-title" class="my-8 text-3xl leading-4 font-bold text-center">
+    <h1 id="chat-title" class="my-8 text-3xl font-bold text-center">
       Chat with AVANI
     </h1>
-    <div id="chatgpt-response">
-      <div id="chatgpt-response-body">
-        <div class="flex flex-wrap -mx-4">
-          <!-- Card 1 -->
-          <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 mb-8">
-            <div class="bg-white rounded-lg shadow-md p-6">
-              <!-- Card content goes here -->
-              <h3 class="text-lg font-semibold mb-2">Card 1</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-          </div>
+    <div id="response">
+      <div id="response-error" class="mb-5"></div>
+      <div id="response-history"></div>
 
-          <!-- Card 2 -->
-          <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 mb-8">
-            <div class="bg-white rounded-lg shadow-md p-6">
-              <!-- Card content goes here -->
-              <h3 class="text-lg font-semibold mb-2">Card 2</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
+      <div id="response-body" class="inline"></div>
+      <div id="response-about" class="flex flex-wrap -mx-4">
+        <!-- Card 1 -->
+        <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 mb-8">
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Card content goes here -->
+            <h3 class="text-lg font-semibold mb-2">Card 1</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </div>
-
-          <!-- Card 3 -->
-          <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 mb-8">
-            <div class="bg-white rounded-lg shadow-md p-6">
-              <!-- Card content goes here -->
-              <h3 class="text-lg font-semibold mb-2">Card 3</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-          </div>
-
-          <!-- Card 4 -->
-          <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 mb-8">
-            <div class="bg-white rounded-lg shadow-md p-6">
-              <!-- Card content goes here -->
-              <h3 class="text-lg font-semibold mb-2">Card 4</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-          </div>
-
-          <!-- Add more cards as needed -->
         </div>
+
+        <!-- Card 2 -->
+        <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 mb-8">
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Card content goes here -->
+            <h3 class="text-lg font-semibold mb-2">Card 2</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 mb-8">
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Card content goes here -->
+            <h3 class="text-lg font-semibold mb-2">Card 3</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 mb-8">
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Card content goes here -->
+            <h3 class="text-lg font-semibold mb-2">Card 4</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
+        </div>
+
+        <!-- Add more cards as needed -->
       </div>
     </div>
     <div>
+      <div id="processing" class="my-5"></div>
       <form
         method="post"
         id="prompt-form"
@@ -56,16 +59,25 @@ content %}
       >
         <input
           type="text"
-          class="w-full text-xl focus:outline-none"
+          class="w-full text-xl focus:outline-none bg-transparent"
           placeholder="Ask me something I don't know!"
           id="prompt"
           name="prompt"
         />
-        <button id="audio-prompt" class="pl-4 pr-8">
-          <span class="text-2xl text-gray-700 mic-button">
+        <button
+          type="button"
+          id="audio-prompt"
+          class="pl-4 pr-8"
+          onclick="startRecording()"
+        >
+          <lable
+            id="record"
+            for="my-modal"
+            class="text-2xl text-gray-700 mic-button"
+          >
             <i class="fa-solid fa-microphone-lines"></i>
             <i class="fa-solid fa-microphone"></i>
-          </span>
+          </lable>
         </button>
         <button id="send-prompt" class="pr-4" type="submit">
           <span class="text-2xl text-gray-700 send-button">
@@ -75,13 +87,38 @@ content %}
         </button>
       </form>
       <div class="mt-2 text-center text-xs text-gray-400">
-        <span>Powered by OpenAI's ChatGPT</span>
+        <span
+          >Powered by
+          <strong><i class="fa-brands fa-google"></i> Bard</strong> and
+          <strong><i class="fa-brands fa-microsoft"></i> Azure</strong></span
+        >
+      </div>
+    </div>
+  </div>
+  <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div
+        class="flex flex-col items-center justify-center bg-white shadow-2xl rounded-lg p-6"
+      >
+        <h2 class="text-xl font-bold mb-4">
+          Click the mic icon to stop recording
+        </h2>
+        <div class="flex justify-center mt-6">
+          <button
+            id="stop-recording"
+            class="flex justify-center items-center"
+            onclick="stopRecording()"
+          >
+            <span id="grow-animation" class="text-5xl text-gray-700 font-bold">
+              <i class="fa-solid fa-microphone-slash"></i>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </section>
-<script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
-<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
-<script src="{{ url_for('static', filename='js/chat-requests.js') }}"></script>
+
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+<script src="{{ url_for('static', filename='js/chatRequests.js') }}"></script>
 {% endblock %}
