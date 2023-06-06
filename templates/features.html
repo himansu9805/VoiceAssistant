@@ -1,10 +1,79 @@
 {% extends "base.html" %} {% block title %}{{ title }}{% endblock %} {% block
 content %}
-<section id="features">
-  <zero-md src="README.md"></zero-md>
+<section class="my-8">
+  <div class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-8 text-center md:text-start">
+      What are the features?
+    </h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="bg-gray-50 rounded-lg shadow-md p-6">
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+            alt="Google Bard"
+            class="w-12 h-12"
+          />
+          <h2 class="text-lg font-bold">
+            Provide Text based or Voice based prompts, Avani will respond to you
+            in voice powered by Microsoft Azure Cognitive Speech Services
+          </h2>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg shadow-md p-6">
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/f/f0/Google_Bard_logo.svg"
+            alt="Google Bard"
+            class="w-12 h-12"
+          />
+          <h2 class="text-lg font-bold mb-4">
+            Powered by Google Bard which is a powerful large language model
+            trained to provide comprehensive and relavant information
+          </h2>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg shadow-md p-6">
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <i class="fa-solid fa-globe text-5xl text-blue-500"></i>
+          <h2 class="text-lg font-bold">
+            Open any website by just prompting<br /><br /><i
+              >"Open [name of website or domain]"</i
+            >
+          </h2>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg shadow-md p-6">
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"
+            alt="Google Bard"
+            class="h-12"
+          />
+          <h2 class="text-lg font-bold mb-4">
+            Play any video from YouTube by just prompting
+            <br /><br /><i>"Play [Name of video]"</i>
+          </h2>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg shadow-md p-6">
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+            alt="Google Bard"
+            class="w-12 h-12"
+          />
+          <h2 class="text-lg font-bold mb-4">
+            Post question and get answer <small>(by Google Bard)</small
+            ><br /><br /><i>"Why zero cannot divide any number?"</i>
+          </h2>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-<script
-  type="module"
-  src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"
-></script>
 {% endblock %}

@@ -3,6 +3,8 @@ import io
 import azure.cognitiveservices.speech as speechsdk
 from dotenv import load_dotenv
 
+from custom_exceptions import SynthesisException
+
 load_dotenv()
 
 subscription_key = os.getenv('AZURE_SUBSCRIPTION_KEY')
@@ -25,6 +27,6 @@ def generate_tts_audio(text):
             audio_data.seek(0)
             return audio_data
         else:
-            raise Exception('TTS synthesis failed.')
+            raise SynthesisException('TTS synthesis failed.')
     else:
-        raise Exception('No result received from TTS service.')
+        raise SynthesisException('No result received from TTS service.')

@@ -4,8 +4,9 @@ import os
 import re
 import requests
 import calendar
-from flask import Flask, jsonify, redirect, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request, Markup
 from azure_speech import generate_tts_audio
+from custom_exceptions import SynthesisException
 import google_bard
 from dotenv import load_dotenv
 import speech_recognition as sr
@@ -60,6 +61,12 @@ def home():
 def features():
     return render_template('features.html', title='Features')
 
+@app.route('/readme')
+def readme():
+    f = open('README.md', 'r', encoding='UTF-8')
+    html_content = marko.convert( f.read() )
+    return render_template('readme.html', title='Read Me', html_content=Markup(html_content))
+
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
@@ -77,46 +84,49 @@ def chat():
         if prompt == "":
             return jsonify({'message': 'Prompt cannot be empty'}), 400
         else:
-            if (prompt.startswith("open ") or prompt.startswith("open website ")) and (prompt.endswith(".com") or prompt.endswith(".in") or prompt.endswith(".org") or prompt.endswith(".net") or prompt.endswith(".co.in") or prompt.endswith(".co")):
-                web = prompt.lower().replace("open website ", "").strip()
-                response = f"Sure, opening {web} for you."
-                processed_response = f"Sure, opening <a href='https://{web}'>{web}</a> for you."
-                final_response["prompt"] = prompt
-                final_response["result"] = processed_response
-                final_response["website"] = web
-            elif prompt.lower().startswith("play "):
-                query = prompt.lower().replace("play ", "").strip()
-                videos_search = VideosSearch(query, limit=1)
-                result = videos_search.result()
-                if 'result' in result:
-                    first_video = result['result'][0]
-                    response = f"Sure, playing {query} for you on YouTube."
-                    processed_response = f"Sure, playing {query} for you on YouTube."
+            try:
+                if (prompt.startswith("open ") or prompt.startswith("open website ")) and (prompt.endswith(".com") or prompt.endswith(".in") or prompt.endswith(".org") or prompt.endswith(".net") or prompt.endswith(".co.in") or prompt.endswith(".co")):
+                    web = prompt.lower().replace("open website ", "").strip()
+                    response = f"Sure, opening {web} for you."
+                    processed_response = f"Sure, opening <a href='https://{web}'>{web}</a> for you."
                     final_response["prompt"] = prompt
                     final_response["result"] = processed_response
-                    final_response["youtube"] = first_video
-            else:
-                response = google_bard.get_answer(prompt)
-                processed_response = marko.convert(response)
-                final_response["prompt"] = prompt
-                final_response["result"] = processed_response
-
-            if len(processed_response) > 500:
-                engine.save_to_file(response.replace("*", ""), 'audio.mp3')
-                engine.runAndWait()
-                with open('audio.mp3', 'rb') as audio_file:
-                    audio_data = audio_file.read()
-                    encoded_audio = base64.b64encode(
-                        audio_data).decode('utf-8')
-            else:
-                audio_data = generate_tts_audio(response.replace("*", ""))
-                if audio_data:
-                    encoded_audio = base64.b64encode(
-                        audio_data.getbuffer()).decode('utf-8')
+                    final_response["website"] = web
+                elif prompt.lower().startswith("play "):
+                    query = prompt.lower().replace("play ", "").strip()
+                    videos_search = VideosSearch(query, limit=1)
+                    result = videos_search.result()
+                    if 'result' in result:
+                        first_video = result['result'][0]
+                        response = f"Sure, playing {query} for you on YouTube."
+                        processed_response = f"Sure, playing {query} for you on YouTube."
+                        final_response["prompt"] = prompt
+                        final_response["result"] = processed_response
+                        final_response["youtube"] = first_video
                 else:
-                    return jsonify({'error': 'Something went wrong at our end. It this persists please contact administrator.'}), 500
-            final_response["audio"] = encoded_audio
-            return jsonify(final_response)
+                    response = google_bard.get_answer(prompt)
+                    processed_response = marko.convert(response)
+                    final_response["prompt"] = prompt
+                    final_response["result"] = processed_response
+
+                if len(processed_response) > 500:
+                    engine.save_to_file(response.replace("*", ""), 'audio.mp3')
+                    engine.runAndWait()
+                    with open('audio.mp3', 'rb') as audio_file:
+                        audio_data = audio_file.read()
+                        encoded_audio = base64.b64encode(
+                            audio_data).decode('utf-8')
+                else:
+                    audio_data = generate_tts_audio(response.replace("*", ""))
+                    if audio_data:
+                        encoded_audio = base64.b64encode(
+                            audio_data.getbuffer()).decode('utf-8')
+                    else:
+                        return jsonify({'error': 'Something went wrong at our end. It this persists please contact administrator.'}), 500
+                final_response["audio"] = encoded_audio
+                return jsonify(final_response)
+            except SynthesisException:
+                return jsonify({'message': 'Something went wrong at our end'}), 500
 
     return render_template('new_chat.html', title='New Chat')
 
@@ -187,8 +197,10 @@ def record():
                     return jsonify({'error': 'Something went wrong at our end. It this persists please contact administrator.'}), 500
             final_response["audio"] = encoded_audio
             return jsonify(final_response)
-    except sr.UnknownValueError or Exception('TTS synthesis failed.'):
+    except sr.UnknownValueError:
         return jsonify({'message': 'Could not understand audio'}), 400
+    except SynthesisException:
+        return jsonify({'message': 'Something went wrong at our end'}), 500
 
 
 if __name__ == '__main__':

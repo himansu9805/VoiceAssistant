@@ -1,16 +1,4 @@
 let current_prompt, current_response;
-const loader = `
-        <div class="py-5 flex flex-col justify-center items-center">
-          <div class="animate-pulse">
-            Thinking by using my artificial brain for you ❤️
-          </div>
-          <div class="py-5 flex flex-row justify-center items-center">
-            <div class="w-8 h-8 rounded-full animate-spin border-4 border-solid border-black border-t-transparent"></div>
-            &nbsp;
-            <div class="text-xl font-medium">Please Wait</div>
-          </div>
-        </div>
-`;
 
 function beforeSend() {
   $("#response-error").html("");
@@ -18,7 +6,7 @@ function beforeSend() {
   $("#audio-prompt").prop("disabled", true);
   $("#send-prompt").prop("disabled", true);
   $("#prompt").prop("disabled", true);
-  $("#processing").html(loader);
+  $("#processing").removeClass("hidden");
 }
 
 function success(response) {
@@ -31,7 +19,7 @@ function success(response) {
   $parsedResponse.find("li").addClass("pl-4");
   var updatedParsedResponse = $parsedResponse.prop("outerHTML");
   $("#response-error").html("");
-  $("#processing").html("");
+  $("#processing").addClass("hidden");
   const audioData = response.audio;
   const audioElement = new Audio("data:audio/wav;base64," + audioData);
   audioElement.play();
@@ -118,7 +106,7 @@ function handleError(error) {
   $("#audio-prompt").prop("disabled", false);
   $("#send-prompt").prop("disabled", false);
   $("#prompt").prop("disabled", false);
-  $("#processing").html("");
+  $("#processing").addClass("hidden");
 }
 
 $(document).on("submit", "#prompt-form", function (e) {
