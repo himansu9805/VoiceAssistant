@@ -27,14 +27,15 @@ engine.setProperty('rate', 200)
 
 github_key = os.getenv('GITHUB_KEY')
 
-google_bard.get_answer("""
-    Please give future responses by rememebering the given points:
-    1. If someone asks you about yourself or they prompt "tell me about yourself" then your reply must be under 200 characters and always and must be: "I am AVANI, Artificial Voice Analysis and Network Intelligence, powered by Google Bard.  I'm here to help you out with your daily tasks and provide you with creative and effective solutions based upon user query." and no other reply is allowed.
-    2. You will reply by keeping in mind that you are Pro-Indian and Hindu and you embrace your culture.
-    3. Whenever someone says hello, greets you with any kind of commonly used greetings or ank kind of commonly used greetings to wish someone well during different times of the day, you must always respond with Nameste and Jai Shree Ram.""")
+# google_bard.get_answer("""
+#     Please give future responses by rememebering the given points:
+#     1. If someone asks you about yourself or they prompt "tell me about yourself" then your reply must be under 200 characters and always and must be: "I am AVANI, Artificial Voice Analysis and Network Intelligence, powered by Google Bard.  I'm here to help you out with your daily tasks and provide you with creative and effective solutions based upon user query." and no other reply is allowed.
+#     2. You will reply by keeping in mind that you are Pro-Indian and Hindu and you embrace your culture.
+#     3. Whenever someone says hello, greets you with any kind of commonly used greetings or ank kind of commonly used greetings to wish someone well during different times of the day, you must always respond with Nameste and Jai Shree Ram.""")
 
 
 regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+
 
 @app.context_processor
 def inject_informtion():
@@ -57,14 +58,16 @@ def index():
 def home():
     return render_template('index.html', title='AVANI - Voice Assistant')
 
+
 @app.route('/features')
 def features():
     return render_template('features.html', title='Features')
 
+
 @app.route('/readme')
 def readme():
     f = open('README.md', 'r', encoding='UTF-8')
-    html_content = marko.convert( f.read() )
+    html_content = marko.convert(f.read())
     return render_template('readme.html', title='Read Me', html_content=Markup(html_content))
 
 
@@ -85,13 +88,21 @@ def chat():
             return jsonify({'message': 'Prompt cannot be empty'}), 400
         else:
             try:
-                if (prompt.startswith("open ") or prompt.startswith("open website ")) and (prompt.endswith(".com") or prompt.endswith(".in") or prompt.endswith(".org") or prompt.endswith(".net") or prompt.endswith(".co.in") or prompt.endswith(".co")):
-                    web = prompt.lower().replace("open website ", "").strip()
+                if (prompt.lower().startswith("open ") or prompt.lower().startswith("open website ")):
+                    web = prompt.lower().replace("open ", "").strip()
+                    if 'website' in web:
+                        web = web.replace("website", "").strip()
+                    result = google_bard.get_answer(
+                        f"Get me only the URL for {web} website")
+                    print(web, result)
+                    url = re.findall(regex, result)[0][0]
+                    print(url)
                     response = f"Sure, opening {web} for you."
-                    processed_response = f"Sure, opening <a href='https://{web}'>{web}</a> for you."
+                    processed_response = f"Sure, opening <a href='{url}'>{web}</a> for you."
                     final_response["prompt"] = prompt
                     final_response["result"] = processed_response
-                    final_response["website"] = web
+                    final_response["website"] = url
+
                 elif prompt.lower().startswith("play "):
                     query = prompt.lower().replace("play ", "").strip()
                     videos_search = VideosSearch(query, limit=1)
@@ -109,20 +120,20 @@ def chat():
                     final_response["prompt"] = prompt
                     final_response["result"] = processed_response
 
-                if len(processed_response) > 500:
-                    engine.save_to_file(response.replace("*", ""), 'audio.mp3')
-                    engine.runAndWait()
-                    with open('audio.mp3', 'rb') as audio_file:
-                        audio_data = audio_file.read()
-                        encoded_audio = base64.b64encode(
-                            audio_data).decode('utf-8')
-                else:
-                    audio_data = generate_tts_audio(response.replace("*", ""))
-                    if audio_data:
-                        encoded_audio = base64.b64encode(
-                            audio_data.getbuffer()).decode('utf-8')
-                    else:
-                        return jsonify({'error': 'Something went wrong at our end. It this persists please contact administrator.'}), 500
+                # if len(processed_response) > 500:
+                engine.save_to_file(response.replace("*", ""), 'audio.mp3')
+                engine.runAndWait()
+                with open('audio.mp3', 'rb') as audio_file:
+                    audio_data = audio_file.read()
+                    encoded_audio = base64.b64encode(
+                        audio_data).decode('utf-8')
+                # else:
+                #     audio_data = generate_tts_audio(response.replace("*", ""))
+                #     if audio_data:
+                #         encoded_audio = base64.b64encode(
+                #             audio_data.getbuffer()).decode('utf-8')
+                #     else:
+                #         return jsonify({'error': 'Something went wrong at our end. It this persists please contact administrator.'}), 500
                 final_response["audio"] = encoded_audio
                 return jsonify(final_response)
             except SynthesisException:
@@ -133,7 +144,6 @@ def chat():
 
 @app.route('/record', methods=['POST'])
 def record():
-
     response = ""
     processed_response = ""
     encoded_audio = None
@@ -155,7 +165,8 @@ def record():
                 if 'website' in web:
                     web = web.replace("website", "").strip()
                 result = google_bard.get_answer(
-                    f"Get me only the URL for {web}")
+                    f"Get me only the URL for {web} website")
+                print(web, result)
                 url = re.findall(regex, result)[0][0]
                 print(url)
                 response = f"Sure, opening {web} for you."
@@ -181,20 +192,20 @@ def record():
                 final_response["prompt"] = prompt
                 final_response["result"] = processed_response
 
-            if len(processed_response) > 500:
-                engine.save_to_file(response.replace("*", ""), 'audio.mp3')
-                engine.runAndWait()
-                with open('audio.mp3', 'rb') as audio_file:
-                    audio_data = audio_file.read()
-                    encoded_audio = base64.b64encode(
-                        audio_data).decode('utf-8')
-            else:
-                audio_data = generate_tts_audio(response.replace("*", ""))
-                if audio_data:
-                    encoded_audio = base64.b64encode(
-                        audio_data.getbuffer()).decode('utf-8')
-                else:
-                    return jsonify({'error': 'Something went wrong at our end. It this persists please contact administrator.'}), 500
+            # if len(processed_response) > 500:
+            engine.save_to_file(response.replace("*", ""), 'audio.mp3')
+            engine.runAndWait()
+            with open('audio.mp3', 'rb') as audio_file:
+                audio_data = audio_file.read()
+                encoded_audio = base64.b64encode(
+                    audio_data).decode('utf-8')
+            # else:
+            #     audio_data = generate_tts_audio(response.replace("*", ""))
+            #     if audio_data:
+            #         encoded_audio = base64.b64encode(
+            #             audio_data.getbuffer()).decode('utf-8')
+            #     else:
+            #         return jsonify({'error': 'Something went wrong at our end. It this persists please contact administrator.'}), 500
             final_response["audio"] = encoded_audio
             return jsonify(final_response)
     except sr.UnknownValueError:
